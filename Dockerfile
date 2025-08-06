@@ -1,20 +1,12 @@
-ARG BUILD_FROM
-FROM $BUILD_FROM
+# Use Python base image instead of Alpine for faster builds
+FROM python:3.11-slim
 
-# Set shell
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-# Install packages
-RUN apk add --no-cache \
-    python3 \
-    py3-pip \
-    python3-dev \
-    gcc \
-    musl-dev \
-    libffi-dev \
-    openssl-dev \
-    avahi-dev \
-    avahi-tools
+# Install only essential system packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    jq \
+    avahi-utils \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create app directory
 WORKDIR /app
@@ -42,7 +34,6 @@ EXPOSE 8000
 LABEL \
     io.hass.name="Spotcast Custom" \
     io.hass.description="Custom Spotify Chromecast controller" \
-    io.hass.arch="${BUILD_ARCH}" \
     io.hass.type="addon" \
     io.hass.version="1.0.0"
 

@@ -5,16 +5,10 @@ description: "Custom Spotify Chromecast controller for Home Assistant"
 url: "https://github.com/darkkatarsis/spotcast-custom"
 icon: "mdi:spotify"
 arch:
-  - armhf
-  - armv7
   - aarch64
   - amd64
-  - i386
 init: false
 stage: stable
-services:
-  - mysql:want
-  - mqtt:want
 ports:
   8000/tcp: 8000
 options:
