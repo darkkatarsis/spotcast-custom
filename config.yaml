@@ -27,4 +27,3 @@ schema:
   spotify_client_secret: str
   spotify_redirect_uri: str
   device_name: str?
-image: "ghcr.io/home-assistant/{arch}-addon-spotcast-custom"
