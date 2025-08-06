@@ -1,5 +1,5 @@
 name: "Spotcast Custom"
-version: "2.0.0"
+version: "2.0.1"
 slug: spotify_chromecast_custom
 description: "Custom Spotify Chromecast controller for Home Assistant"
 url: "https://github.com/darkkatarsis/spotcast-custom"
