@@ -2,6 +2,5 @@ spotipy>=2.22.1
 pychromecast>=13.0.8
 flask>=2.3.3
 requests>=2.31.0
-asyncio>=3.4.3
 aiohttp>=3.8.5
 python-dotenv>=1.0.0
