@@ -1,0 +1,175 @@
+# Home Assistant integration configuration for Spotcast Custom
+# Add this to your configuration.yaml
+
+# REST Commands for Spotcast Custom
+rest_command:
+  spotcast_play:
+    url: "http://localhost:8000/play"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    payload: >
+      {
+        "device_name": "{{ device_name }}",
+        "uri": "{{ uri }}"
+      }
+  
+  spotcast_pause:
+    url: "http://localhost:8000/pause"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    payload: >
+      {
+        "device_name": "{{ device_name | default('') }}"
+      }
+  
+  spotcast_stop:
+    url: "http://localhost:8000/stop"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    payload: >
+      {
+        "device_name": "{{ device_name | default('') }}"
+      }
+
+# Sensors to monitor Spotcast status
+sensor:
+  - platform: rest
+    name: "Spotcast Server Status"
+    resource: "http://localhost:8000/status"
+    method: GET
+    headers:
+      Content-Type: "application/json"
+    value_template: "{{ value_json.server_status }}"
+    json_attributes:
+      - authenticated
+      - chromecasts_found
+      - chromecasts
+    scan_interval: 30
+
+  - platform: rest
+    name: "Spotcast Devices"
+    resource: "http://localhost:8000/devices"
+    method: GET
+    headers:
+      Content-Type: "application/json"
+    value_template: "{{ value_json.chromecasts | length }}"
+    json_attributes:
+      - chromecasts
+    scan_interval: 300
+
+# Input selects for device and playlist selection
+input_select:
+  spotcast_device:
+    name: "Chromecast Device"
+    options:
+      - "Living Room TV"
+      - "Kitchen Speaker"
+      - "Bedroom Speaker"
+      - "Office Speaker"
+    initial: "Living Room TV"
+    icon: mdi:cast
+
+  spotcast_playlist:
+    name: "Spotify Playlist"
+    options:
+      - "Daily Mix 1"
+      - "Discover Weekly"
+      - "Release Radar"
+      - "Liked Songs"
+      - "Today's Top Hits"
+    initial: "Daily Mix 1"
+    icon: mdi:playlist-music
+
+# Input text for custom Spotify URIs
+input_text:
+  spotcast_uri:
+    name: "Custom Spotify URI"
+    initial: "spotify:playlist:37i9dQZF1DXcBWIGoYBM5M"
+    icon: mdi:spotify
+
+# Scripts for easy playback control
+script:
+  spotcast_play_playlist:
+    alias: "Play Spotify Playlist"
+    sequence:
+      - service: rest_command.spotcast_play
+        data:
+          device_name: "{{ states('input_select.spotcast_device') }}"
+          uri: "{{ states('input_text.spotcast_uri') }}"
+
+  spotcast_pause_playback:
+    alias: "Pause Spotify Playback"
+    sequence:
+      - service: rest_command.spotcast_pause
+        data:
+          device_name: "{{ states('input_select.spotcast_device') }}"
+
+  spotcast_stop_playbook:
+    alias: "Stop Spotify Playback"
+    sequence:
+      - service: rest_command.spotcast_stop
+        data:
+          device_name: "{{ states('input_select.spotcast_device') }}"
+
+# Example automations
+automation:
+  - alias: "Morning Music"
+    description: "Play morning playlist at 7 AM"
+    trigger:
+      platform: time
+      at: "07:00:00"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: "on"  # Only on workdays
+    action:
+      - service: rest_command.spotcast_play
+        data:
+          device_name: "Kitchen Speaker"
+          uri: "spotify:playlist:37i9dQZF1DXcBWIGoYBM5M"  # Today's Top Hits
+
+  - alias: "Evening Chill Music"
+    description: "Play chill music in the evening"
+    trigger:
+      platform: time
+      at: "19:00:00"
+    action:
+      - service: rest_command.spotcast_play
+        data:
+          device_name: "Living Room TV"
+          uri: "spotify:playlist:37i9dQZF1DX0MLFaUdXnjA"  # Chill Hits
+
+  - alias: "Stop Music at Bedtime"
+    description: "Stop all music at bedtime"
+    trigger:
+      platform: time
+      at: "22:30:00"
+    action:
+      - service: rest_command.spotcast_stop
+        data:
+          device_name: ""  # Stop on all devices
+
+# Lovelace card configuration (add to your dashboard)
+# type: entities
+# title: Spotify Control
+# entities:
+#   - entity: sensor.spotcast_server_status
+#     name: "Server Status"
+#   - entity: sensor.spotcast_devices
+#     name: "Devices Found"
+#   - entity: input_select.spotcast_device
+#   - entity: input_text.spotcast_uri
+#   - type: buttons
+#     entities:
+#       - entity: script.spotcast_play_playlist
+#         name: "Play"
+#         icon: mdi:play
+#       - entity: script.spotcast_pause_playback
+#         name: "Pause"
+#         icon: mdi:pause
+#       - entity: script.spotcast_stop_playbook
+#         name: "Stop"
+#         icon: mdi:stop

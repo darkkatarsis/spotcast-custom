@@ -1,0 +1,29 @@
+name: "Spotcast Custom"
+version: "1.0.0"
+slug: spotcast_custom
+description: "Custom Spotify Chromecast controller for Home Assistant"
+url: "https://github.com/custom/spotcast-custom"
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+  - i386
+init: false
+stage: stable
+services:
+  - mysql:want
+  - mqtt:want
+ports:
+  8000/tcp: 8000
+options:
+  spotify_client_id: ""
+  spotify_client_secret: ""
+  spotify_redirect_uri: "http://localhost:8000/callback"
+  device_name: ""
+schema:
+  spotify_client_id: str
+  spotify_client_secret: str
+  spotify_redirect_uri: str
+  device_name: str?
+image: "ghcr.io/home-assistant/{arch}-addon-spotcast-custom"

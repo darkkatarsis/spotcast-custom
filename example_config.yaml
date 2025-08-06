@@ -1,0 +1,7 @@
+# Example configuration for Spotcast Custom Add-on
+# Copy this to your Home Assistant add-on configuration
+
+spotify_client_id: "your_spotify_client_id_here"
+spotify_client_secret: "your_spotify_client_secret_here"  
+spotify_redirect_uri: "http://192.168.1.100:8000/callback"  # Replace with your HA IP
+device_name: "Living Room TV"  # Optional: your default Chromecast device name
