@@ -45,7 +45,7 @@ LABEL \
     io.hass.name="Spotcast Custom" \
     io.hass.description="Custom Spotify Chromecast controller" \
     io.hass.type="addon" \
-    io.hass.version="1.0.0"
+    io.hass.version="1.0.3"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s \
