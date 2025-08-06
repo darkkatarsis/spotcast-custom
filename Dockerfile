@@ -1,12 +1,8 @@
-# Use Python base image instead of Alpine for faster builds
-FROM python:3.11-slim
+# Use minimal Python image for fastest possible builds
+FROM python:3.11-alpine
 
-# Install only essential system packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    jq \
-    avahi-utils \
-    && rm -rf /var/lib/apt/lists/*
+# Install minimal required packages
+RUN apk add --no-cache curl jq
 
 # Create app directory
 WORKDIR /app

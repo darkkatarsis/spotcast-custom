@@ -71,18 +71,12 @@ def setup_environment():
     # Check if .env file exists
     env_file = ".env"
     if os.path.exists(env_file):
-        print(f"✅ Found {env_file} file")
-        try:
-            from dotenv import load_dotenv
-            load_dotenv()
-            print("✅ Environment variables loaded from .env")
-        except ImportError:
-            print("⚠️  python-dotenv not installed, loading manually...")
-            with open(env_file, 'r') as f:
-                for line in f:
-                    if '=' in line and not line.startswith('#'):
-                        key, value = line.strip().split('=', 1)
-                        os.environ[key] = value.strip('"\'')
+        print(f"✅ Found {env_file} file, loading manually...")
+        with open(env_file, 'r') as f:
+            for line in f:
+                if '=' in line and not line.startswith('#'):
+                    key, value = line.strip().split('=', 1)
+                    os.environ[key] = value.strip('"\'')
     else:
         print("📝 Creating .env file...")
         
