@@ -45,3 +45,8 @@ data/
 # Secrets
 secrets.yaml
 .env.local
+
+# Developer tools (not part of addon)
+bump_version.sh
+release.sh
+*.backup
