@@ -54,7 +54,7 @@ check_ha_environment() {
 
 # Create addon directory
 create_addon_directory() {
-    ADDON_DIR="$HA_ROOT/spotcast_custom"
+    ADDON_DIR="$HA_ROOT/spotify_chromecast_custom"
     
     print_info "Creating add-on directory: $ADDON_DIR"
     
@@ -175,7 +175,7 @@ main() {
 # Check if we're in the right directory
 if [ ! -f "config.yaml" ] || [ ! -f "spotcast_server.py" ]; then
     print_error "Installation files not found in current directory"
-    print_info "Please run this script from the spotcast_custom directory"
+    print_info "Please run this script from the spotify_chromecast_custom directory"
     exit 1
 fi
 
