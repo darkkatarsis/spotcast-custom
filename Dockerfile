@@ -1,41 +1,25 @@
-# Use minimal Python image for fastest possible builds
-FROM python:3.11-alpine
+# Standard Home Assistant add-on Dockerfile (following official tutorial)
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
-# Install minimal required packages for networking and compilation
-RUN echo "🔧 Installing system packages..." && \
-    apk add --no-cache \
+# Install requirements for add-on (including Python 3)
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
     curl \
-    jq \
-    gcc \
-    musl-dev \
-    libffi-dev && \
-    echo "✅ System packages installed!"
+    jq
 
-# Create app directory
+# Set working directory to app
 WORKDIR /app
 
-# Copy requirements first for better Docker layer caching
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Install Python dependencies with verbose output and optimization
-RUN echo "🔧 Installing Python packages..." && \
-    pip3 install --no-cache-dir --verbose --timeout 300 \
-    spotipy==2.22.1 \
-    flask==2.3.3 \
-    requests==2.31.0 && \
-    echo "🔧 Installing pychromecast (may take longer)..." && \
-    pip3 install --no-cache-dir --verbose --timeout 300 pychromecast==13.0.8 && \
-    echo "✅ All packages installed successfully!"
-
-# Copy application files
+# Copy all application files
 COPY spotcast_server.py .
 COPY run.sh /
-
-# Make run script executable
 RUN chmod a+x /run.sh
-
-# Set working directory
-WORKDIR /app
 
 # Expose port
 EXPOSE 8000
@@ -45,7 +29,7 @@ LABEL \
     io.hass.name="Spotcast Custom" \
     io.hass.description="Custom Spotify Chromecast controller" \
     io.hass.type="addon" \
-    io.hass.version="1.0.4"
+    io.hass.version="1.0.5"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s \
